@@ -1,46 +1,46 @@
-from tkinter import *
+import re
+import numpy as np
+from scipy import spatial
+from collections import Counter
 
-WINDOW_GEOMETRY = "300x250"
+f = open('sentences.txt', 'r')
+sentences = [i.lower() for i in f.read().split('\n') if i != ""]
+words = []
+for i, sentence in enumerate(sentences):
+    tmp = []
+    for j in re.split('[^a-z]', sentence):
+        if j != "":
+            tmp.append(j)
+    words.append(tmp)
 
-#создаём окно
-root = Tk()
-root.title("Games")
-root.geometry(WINDOW_GEOMETRY)
-
-#кнопка приветствия
-label1 = Label(text="Hello stranger", fg="#eee", bg="#333")
-label1.pack()
-
-
-text = "Select game"
-label2 = Label(text=text, justify=LEFT)
-label2.place(relx=.40, rely=.45)
-
-#функции кнопок из других файлов
-def click_button1():
-    from second import Aerohockey
-    Aerohockey.main()
-def click_button_death():
-    from second import died
-    died.show()
+all_words = dict()
+k = 0
+for s_words in words:
+    for word in s_words:
+        if word not in all_words:
+            all_words[word] = k
+            k += 1
 
 
-#Зададим параметры кнопок
-btn1 = Button(text="aerohockey", background="#555", foreground="#ccc",
-             padx="10", pady="5", font="100", command=click_button1)
+res = np.array([[0]*len(all_words) for i in np.arange(len(sentences))])
+for i, s_words in enumerate(words):
+    co = Counter(s_words)
+    for j in co:
+        res[i][all_words[j]] = co[j]
 
-btn1.pack(side = LEFT)
+#print res[0][all_words['osx']]
 
+distances = []
+for i in range(1, len(res)):
+    distances.append(spatial.distance.cosine(res[0], res[i]))
+s_distances = sorted(distances)
 
-btn2 = Button(text="smth else", background="#555", foreground="#ccc",
-             padx="10", pady="5", font="100")
-btn2.pack(side = RIGHT)
+print (distances.index(s_distances[0]))
+print (distances.index(s_distances[1]))
 
+# PROVE
 
-btn3 = Button(text="you died", background="#555", foreground="#ccc",
-             padx="10", pady="5", font="100", command = click_button_death)
-btn3.pack(side = BOTTOM)
-
-#Запуск окна
-
-root.mainloop()
+#tmp = [no for no, x in enumerate(res[0]) if x != 0]
+#print(tmp)
+#for j in tmp:
+#    print ([i for i, x in all_words.iteritems() if x == j])
