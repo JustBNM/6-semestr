@@ -41,6 +41,6 @@ print distances.index(s_distances[1])
 # PROVE
 
 #tmp = [no for no, x in enumerate(res[0]) if x != 0]
-#print(tmp)
+#print tmp
 #for j in tmp:
 #    print ([i for i, x in all_words.iteritems() if x == j])
