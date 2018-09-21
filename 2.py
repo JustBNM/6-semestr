@@ -12,4 +12,4 @@ f = np.vectorize(f)
 y = f(x)
 
 res = sc.differential_evolution(f, [(1, 30)])
-print (res)
+print res
